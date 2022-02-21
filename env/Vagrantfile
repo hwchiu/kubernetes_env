@@ -1,0 +1,61 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure("2") do |config|
+  config.vm.box = "bento/ubuntu-20.04"
+  config.vm.box_version ='202112.19.0'
+  config.vm.hostname = 'k8s-dev'
+  config.vm.define vm_name = 'k8s'
+
+  config.vm.provision "shell", privileged: false, inline: <<-SHELL
+    set -e -x -u
+    export DEBIAN_FRONTEND=noninteractive
+
+    export DOCKER_VERSION="5:20.10.12~3-0~ubuntu-focal"
+    curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+    sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+    sudo apt-get update
+    sudo apt-get install -y docker-ce=${DOCKER_VERSION}
+    sudo usermod -aG docker $USER
+
+    export NERDCTL_VERSION=0.17.0
+    export NERDCTL_SHA256SUM=4c08a6ce657ff851dd7a7b1d21c64f1c1950e35de03fa7f1853eab47fa2b2d53
+    curl -o /tmp/nerdctl.tar.gz -L https://github.com/containerd/nerdctl/releases/download/v0.17.0/nerdctl-${NERDCTL_VERSION}-linux-amd64.tar.gz
+    echo "${NERDCTL_SHA256SUM}" /tmp/nerdctl.tar.gz | sha256sum -c -
+    pushd /tmp
+    tar -xvf nerdctl.tar.gz nerdctl
+    sudo install -m755 nerdctl /usr/local/bin/
+    sudo rm nerdctl.tar.gz nerdctl
+    popd
+
+    #Disable swap
+    #https://github.com/kubernetes/kubernetes/issues/53533
+    sudo swapoff -a && sudo sysctl -w vm.swappiness=0
+
+    export KUBE_VERSION="1.22.0"
+
+    curl -LO https://dl.k8s.io/release/v${KUBE_VERSION}/bin/linux/amd64/kubectl
+    sudo install -m 755 kubectl  /usr/local/bin/
+    sudo apt-get update && sudo apt-get install -y apt-transport-https curl
+    curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
+    echo "deb http://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee --append /etc/apt/sources.list.d/kubernetes.list
+    sudo apt-get update
+    sudo apt-get install -y kubeadm=${KUBE_VERSION}-00 kubelet=${KUBE_VERSION}-00
+    sudo kubeadm config images pull
+
+    sudo echo "{\"exec-opts\": [\"native.cgroupdriver=systemd\"]}" | sudo tee /etc/docker/daemon.json
+    sudo systemctl restart docker
+
+    echo 'source <(kubectl completion bash)' >>~/.bashrc
+
+    git clone --depth=1 https://github.com/Bash-it/bash-it.git ~/.bash_it
+    bash ~/.bash_it/install.sh -s
+  SHELL
+
+  config.vm.network :private_network, ip: "10.22.33.44"
+  config.vm.provider :virtualbox do |v|
+      v.customize ["modifyvm", :id, "--cpus", 2]
+      v.customize ["modifyvm", :id, "--memory", 4096]
+      v.customize ['modifyvm', :id, '--nicpromisc1', 'allow-all']
+  end
+end
