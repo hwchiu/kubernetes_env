@@ -43,8 +43,8 @@ Vagrant.configure("2") do |config|
     sudo apt-get install -y kubeadm=${KUBE_VERSION}-00 kubelet=${KUBE_VERSION}-00
     sudo kubeadm config images pull
 
-    sudo echo "{\"exec-opts\": [\"native.cgroupdriver=systemd\"]}" | sudo tee /etc/docker/daemon.json
-    sudo systemctl restart docker
+#    sudo echo "{\"exec-opts\": [\"native.cgroupdriver=systemd\"]}" | sudo tee /etc/docker/daemon.json
+#    sudo systemctl restart docker
 
     echo 'source <(kubectl completion bash)' >>~/.bashrc
 
