@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: python-web
+spec:
+  selector:
+    matchLabels:
+      app: python-web
+  serviceName: "python-web"
+  replicas: 5
+  template:
+    metadata:
+      labels:
+        app: python-web
+    spec:
+      containers:
+      - name: busybox
+        image: busybox:1.30.0
+        command: ["/bin/sh", "-c", "sleep 100000"]

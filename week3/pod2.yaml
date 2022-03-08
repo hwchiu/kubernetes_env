@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod-fail
+spec:
+  containers:
+    - name: ubuntu
+      image: hwchiu/netutils
+    - name: ubuntu2
+      image: hwchiu/haha

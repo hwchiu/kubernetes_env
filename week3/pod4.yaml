@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod-update
+spec:
+  containers:
+    - name: ubuntu
+      image: hwchiu/netutils:python
+      ports:
+        - containerPort: 8000
+          protocol: "TCP"

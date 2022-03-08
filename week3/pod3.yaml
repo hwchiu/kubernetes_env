@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod-crash
+spec:
+  containers:
+    - name: ubuntu
+      image: hwchiu/netutils
+      command: ['sh', '-c', 'echo "Hello, Kubernetes" && no']

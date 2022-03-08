@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: www-deployment
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: www
+  template:
+    metadata:
+      labels:
+        app: www
+    spec:
+      containers:
+      - name: my-www
+        image: hwchiu/netutils:python
+        ports:
+          - containerPort: 8000
+            protocol: "TCP"
