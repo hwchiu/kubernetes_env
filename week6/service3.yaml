@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: www-nodeport
+  labels:
+    app: www-nodeport
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: www-nodeport
+  template:
+    metadata:
+      labels:
+        app: www-nodeport
+    spec:
+      containers:
+      - name: my-www
+        image: hwchiu/netutils:python
+        ports:
+          - name: python-port
+            containerPort: 8000
+            protocol: "TCP"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nodeport-example
+spec:
+  type: NodePort
+  selector:
+    app: www-nodeport
+  ports:
+  - name: www-port
+    protocol: TCP
+    port: 80
+    targetPort: python-port
+    nodePort: 30007

@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: liveness-deployment
+  labels:
+    app: www-readiness
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: www-readiness
+  template:
+    metadata:
+      labels:
+        app: www-readiness
+    spec:
+      containers:
+      - name: my-liveness
+        image: hwchiu/netutils:python
+        ports:
+        - name: python-port
+          containerPort: 8000
+          protocol: "TCP"
+        readinessProbe:
+          httpGet:
+            path: /tmp/haha
+            port: python-port
+          failureThreshold: 3
+          periodSeconds: 2
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: readiness-example
+spec:
+  type: ClusterIP
+  selector:
+    app: www-readiness
+  ports:
+  - name: www-port
+    protocol: TCP
+    port: 80
+    targetPort: python-port
+
