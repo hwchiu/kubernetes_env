@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: liveness-deployment
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: liveness
+  template:
+    metadata:
+      labels:
+        app: liveness
+    spec:
+      containers:
+      - name: my-liveness
+        image: hwchiu/netutils:python
+        ports:
+        - name: python-port
+          containerPort: 8972
+          protocol: "TCP"
+        livenessProbe:
+          exec:
+            command:
+            - cat
+            - /tmp/healthy
+          failureThreshold: 3
+          periodSeconds: 2
+ 

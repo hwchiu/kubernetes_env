@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: probe-deployment
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: probe
+  template:
+    metadata:
+      labels:
+        app: probe
+    spec:
+      containers:
+      - name: my-probe
+        image: hwchiu/netutils:python
+        ports:
+        - name: python-port
+          containerPort: 8000
+          protocol: "TCP"
+        livenessProbe:
+          exec:
+            command:
+            - cat
+            - /aa
+          failureThreshold: 3
+          periodSeconds: 2
+        startupProbe:
+          httpGet:
+            path: /
+            port: python-port
+          failureThreshold: 5
+          periodSeconds: 5
+ 
