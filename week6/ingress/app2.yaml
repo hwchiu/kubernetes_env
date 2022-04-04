@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hello-k8s
+  labels:
+    app: hello-k8s
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: hello-k8s
+  template:
+    metadata:
+      labels:
+        app: hello-k8s
+    spec:
+      containers:
+      - name: my-www
+        image: paulbouwer/hello-kubernetes:1.10
+        ports:
+          - name: python-port
+            containerPort: 8080
+            protocol: "TCP"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: hello-k8s
+spec:
+  type: ClusterIP
+  selector:
+    app: hello-k8s
+  ports:
+  - name: www-port
+    protocol: TCP
+    port: 80
+    targetPort: python-port

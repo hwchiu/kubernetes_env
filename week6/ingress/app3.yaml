@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: golang-www
+  labels:
+    app: golang-www
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: golang-www
+  template:
+    metadata:
+      labels:
+        app: golang-www
+    spec:
+      containers:
+      - name: my-www
+        image: hwchiu/new_app:2.3.4
+        ports:
+          - name: go-port
+            containerPort: 80
+            protocol: "TCP"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: golang-www
+spec:
+  type: ClusterIP
+  selector:
+    app: golang-www
+  ports:
+  - name: www-port
+    protocol: TCP
+    port: 80
+    targetPort: go-port
