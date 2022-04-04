@@ -1,35 +1,35 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: golang-www
+  name: ghost
   labels:
-    app: golang-www
+    app: ghost
 spec:
   replicas: 3
   selector:
     matchLabels:
-      app: golang-www
+      app: ghost
   template:
     metadata:
       labels:
-        app: golang-www
+        app: ghost
     spec:
       containers:
       - name: my-www
-        image: hwchiu/new_app:2.3.4
+        image: ghost:4.41
         ports:
           - name: go-port
-            containerPort: 80
+            containerPort: 2368
             protocol: "TCP"
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: golang-www
+  name: ghost
 spec:
   type: ClusterIP
   selector:
-    app: golang-www
+    app: ghost
   ports:
   - name: www-port
     protocol: TCP
