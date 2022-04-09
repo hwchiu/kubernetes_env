@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cm-env-file
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: cm-env
+  template:
+    metadata:
+      labels:
+        app: cm-env
+    spec:
+      containers:
+      - name: my-www
+        image: hwchiu/netutils:python
+        ports:
+          - containerPort: 8000
+            protocol: "TCP"
+        env:
+          - name: DB_PORT
+            valueFrom:
+              configMapKeyRef:
+                name: app-config
+                key: db.port
+          - name: DB_TIMEOUT
+            valueFrom:
+              configMapKeyRef:
+                name: app-config
+                key: db.connection_timeout
+          - name: DB_METHOD
+            valueFrom:
+              configMapKeyRef:
+                name: app-config
+                key: db.connection_method

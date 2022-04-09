@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hostpath-file
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: hostpath
+  template:
+    metadata:
+      labels:
+        app: hostpath
+    spec:
+      containers:
+      - name: container1
+        image: hwchiu/netutils:python
+        ports:
+          - containerPort: 8000
+            protocol: "TCP"
+        volumeMounts:
+        - mountPath: /config
+          name: data
+      - name: container2
+        image: hwchiu/netutils:python
+        ports:
+          - containerPort: 8000
+            protocol: "TCP"
+        volumeMounts:
+        - mountPath: /data
+          name: data
+      volumes:
+      - name: data
+        hostPath:
+          path: /data
+          type: DirectoryOrCreate

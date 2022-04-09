@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cm-file-example
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: cm-file
+  template:
+    metadata:
+      labels:
+        app: cm-file
+    spec:
+      containers:
+      - name: my-www
+        image: hwchiu/netutils:python
+        ports:
+          - containerPort: 8000
+            protocol: "TCP"
+        volumeMounts:
+          - name: config
+            mountPath: "/config"
+            readOnly: true
+      volumes:
+        - name: config
+          configMap:
+            name: app-config
+            items:
+              - key: "db"
+                path: "db.json"
+              - key: "db.port"
+                path: "db_port"

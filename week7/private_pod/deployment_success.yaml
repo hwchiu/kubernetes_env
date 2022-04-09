@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: private-registry-example
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: private-registry
+  template:
+    metadata:
+      labels:
+        app: private-registry
+    spec:
+      containers:
+      - name: my-www
+        image: hwchiu/test:python
+        ports:
+          - containerPort: 8000
+            protocol: "TCP"
+        imagePullPolicy: Always
+      imagePullSecrets:
+          - name: docker-login

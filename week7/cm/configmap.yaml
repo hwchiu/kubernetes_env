@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app-config
+data:
+  db.connection_timeout: "60s"
+  db.connection_method: "https"
+  db.port: "3459"
+  db: |
+   {
+     connection_timeout: "60s",
+     connection_method: "https",
+     port: 3480
+   }
