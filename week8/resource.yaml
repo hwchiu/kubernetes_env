@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: resource-deployment
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: resource
+  template:
+    metadata:
+      labels:
+        app: resource
+    spec:
+      containers:
+      - name: my-app
+        image: hwchiu/newapp:2.0.0
+        resources:
+          requests:
+            #cpu: "2500m"
+            cpu: "250m"
+            memory: "256Mi"
+      - name: my-python
+        image: hwchiu/netutils:python
+        resources:
+          requests:
+            cpu: "250m"
+            memory: "256Mi"
+          limits:
+            cpu: "250m"
+            memory: "512Mi"

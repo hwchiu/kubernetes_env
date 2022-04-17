@@ -1,18 +1,18 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: www-nodeport
+  name: www-clusterip
   labels:
-    app: www-nodeport
+    app: www-clusterip
 spec:
   replicas: 3
   selector:
     matchLabels:
-      app: www-nodeport
+      app: www-clusterip
   template:
     metadata:
       labels:
-        app: www-nodeport
+        app: www-clusterip
     spec:
       containers:
       - name: my-www
@@ -25,14 +25,13 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: nodeport-example
+  name: wait-me
 spec:
-  type: NodePort
+  type: ClusterIP
   selector:
-    app: www-nodeport
+    app: www-clusterip
   ports:
   - name: www-port
     protocol: TCP
     port: 80
     targetPort: python-port
-    nodePort: 30015
