@@ -26,18 +26,19 @@ kind: PersistentVolumeClaim
 metadata:
   name: task-pv-claim
 spec:
+  storageClassName: manual
   accessModes:
     - ReadWriteOnce
   resources:
     requests:
-      storage: 3Gi
+      storage: 3000Gi
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: task-pv
 spec:
-  replicas: 2
+  replicas: 5
   selector:
     matchLabels:
       app: task-pv
